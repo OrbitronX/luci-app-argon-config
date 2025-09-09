@@ -2,7 +2,7 @@
 #edited to use snapshot branch
 #Kyo 2024-11
 
-name: "Compile Apk with Snapshot SDK"
+name: "Compile With Snapshot SDK"
 on:
   repository_dispatch:
   workflow_dispatch:
@@ -27,7 +27,7 @@ jobs:
           fetch-depth: 0
           ref: 'master'
 
-      - name: Check version
+      - name: Check Version
         id: check_version
         env:
           url_release: https://api.github.com/repos/${{ github.repository }}/releases/latest
@@ -41,7 +41,7 @@ jobs:
           echo "latest_release: ${latest_release}"
           echo "has_update: ${has_update}"
 
-      - name: Generate new tag & release
+      - name: Generate New Tag & Release
         if: steps.check_version.outputs.has_update == 'true'
         uses: softprops/action-gh-release@v1
         env:
@@ -57,7 +57,7 @@ jobs:
     if: needs.job_check.outputs.has_update == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Install packages
+      - name: Install Packages
         run: |
           echo "Install packages"
           sudo -E apt-get -qq update
@@ -65,14 +65,14 @@ jobs:
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
 
-      - name: Cache openwrt SDK
+      - name: Cache OpenWrt SDK
         id: cache-sdk
         uses: actions/cache@v3
         with:
           path: sdk
           key: openwrt-sdk-snapshot-x86-64
 
-      - name: Initialization environment
+      - name: Initialization Environment
         if: steps.cache-sdk.outputs.cache-hit != 'true'
         env:
           url_sdk: https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
@@ -120,7 +120,7 @@ jobs:
           echo "status=success" >> $GITHUB_OUTPUT
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
-      - name: Upload Argon Config to release
+      - name: Upload Argon Config To Releases
         uses: softprops/action-gh-release@v1
         if: steps.compile.outputs.status == 'success'
         env:

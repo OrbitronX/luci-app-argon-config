@@ -2,7 +2,7 @@
 #edited to use snapshot branch
 #Kyo 2024-11
 
-name: "luci-app-argon-config APK build - Auto compile with OpenWrt SDK"
+name: "Compile Apk with Snapshot SDK"
 on:
   repository_dispatch:
   workflow_dispatch:
@@ -52,7 +52,7 @@ jobs:
 
 
   job_build_argon:
-    name: Build Argon Config (master)
+    name: Build Argon Config
     needs: job_check
     if: needs.job_check.outputs.has_update == 'true'
     runs-on: ubuntu-latest
@@ -93,7 +93,7 @@ jobs:
           ./scripts/feeds install -d n luci-i18n-argon-config-zh-cn
           make download -j8
 
-      - name: Configure Argon Config (master)
+      - name: Configure Argon Config
         run: |
           cd sdk
           ./scripts/feeds install luci-base
@@ -107,7 +107,7 @@ jobs:
           echo "CONFIG_PACKAGE_luci-app-argon-config=m" >> .config
           make defconfig
 
-      - name: Compile Argon Config (master)
+      - name: Compile Argon Config
         id: compile
         run: |
           cd sdk
@@ -120,7 +120,7 @@ jobs:
           echo "status=success" >> $GITHUB_OUTPUT
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
-      - name: Upload Argon Config (master) APKs to release
+      - name: Upload Argon Config to release
         uses: softprops/action-gh-release@v1
         if: steps.compile.outputs.status == 'success'
         env:
